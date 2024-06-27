@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>To-Do List App</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f2f2f2;
+}
+
+.container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+input[type="text"] {
+    width: 70%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 5px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+.completed {
+    text-decoration: line-through;
+    color: #999;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <h2>To-Do List</h2>
+    <input type="text" id="taskInput" placeholder="Enter a task...">
+    <button onclick="addTask('taskList')">Add</button>
+    <button onclick="editTask('taskList')">Edit</button>
+    <button onclick="deleteTask('taskList')">Delete</button>
+    <ul id="taskList"></ul>
+    <h3>Important Tasks</h3>
+    <input type="text" id="importantTaskInput" placeholder="Enter an important task...">
+    <button onclick="addTask('importantTaskList')">Add Important Task</button>
+    <button onclick="editTask('importantTaskList')">Edit Important Task</button>
+    <button onclick="deleteTask('importantTaskList')">Delete Important Task</button>
+    <ul id="importantTaskList"></ul>
+</div>
+
+<script>
+function addTask(listId) {
+    var input = document.getElementById(listId === 'importantTaskList' ? 'importantTaskInput' : 'taskInput').value;
+    if (input.trim() !== "") {
+        var li = document.createElement("li");
+        li.innerHTML = '<input type="checkbox" class="taskCheckbox" onchange="updateStatusMessage()">' + input;
+        document.getElementById(listId).appendChild(li);
+        document.getElementById(listId === 'importantTaskList' ? 'importantTaskInput' : 'taskInput').value = "";
+    }
+}
+
+function editTask(listId) {
+    var tasks = document.querySelectorAll("#" + listId + " input[type='checkbox']:checked");
+    if (tasks.length !== 1) {
+        alert("Please select one task to edit.");
+        return;
+    }
+    var newTask = prompt("Edit Task:", tasks[0].nextSibling.textContent.trim());
+    if (newTask !== null && newTask.trim() !== "") {
+        tasks[0].nextSibling.textContent = newTask;
+    }
+    updateStatusMessage();
+}
+
+function deleteTask(listId) {
+    var tasks = document.querySelectorAll("#" + listId + " input[type='checkbox']:checked");
+    if (tasks.length === 0) {
+        alert("Please select at least one task to delete.");
+        return;
+    }
+    var confirmed = confirm("Are you sure you want to delete the selected task(s)?");
+    if (confirmed) {
+        tasks.forEach(task => task.parentNode.remove());
+        updateStatusMessage();
+    }
+}
+
+function updateStatusMessage() {
+    var tasks = document.querySelectorAll(".taskCheckbox");
+    var completedCount = Array.from(tasks).filter(task => task.checked).length;
+    if (completedCount === tasks.length && tasks.length > 0) {
+        alert("Congratulations! All tasks completed successfully!");
+    }
+}
+</script>
+</body>
+</html>
